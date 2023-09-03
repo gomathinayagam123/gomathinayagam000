@@ -1,0 +1,11 @@
+from flask_limiter import Limiter
+
+limiter = Limiter(app, key_func=get_remote_address)
+
+@app.route('/api', methods=['GET'])
+@limiter.limit("5 per minute")
+def api_endpoint():
+    return "API response"
+
+if __name__ == '__main__':
+    app.run(debug=True)
