@@ -1,0 +1,32 @@
+#jwt based authentication
+from flask_jwt_extended import JWTManager, jwt_required, create_access_token, get_jwt_identity
+from flask import jsonify
+
+# Initialize the Flask app and JWT
+app = Flask(__name__)
+app.config['JWT_SECRET_KEY'] = 'your_secret_key'  # Replace with a secure secret key
+jwt = JWTManager(app)
+
+# Define an authentication route
+@app.route('/auth', methods=['POST'])
+def authenticate():
+    username = request.json.get('username')
+    password = request.json.get('password')
+    
+    # Implement your user authentication logic here (e.g., check username and password against a database)
+    # If authentication is successful, create and return an access token
+    if username == 'your_username' and password == 'your_password':
+        access_token = create_access_token(identity=username)
+        return jsonify(access_token=access_token)
+    else:
+        return jsonify({"message": "Authentication failed"}), 401
+
+# Protected route requiring authentication
+@app.route('/protected', methods=['GET'])
+@jwt_required()
+def protected_route():
+    current_user = get_jwt_identity()
+    return f"Hello, {current_user}! This is a protected route."
+
+if __name__ == '__main__':
+    app.run(debug=True)
